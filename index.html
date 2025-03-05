@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Assistant</title>
+    <style>
+        /* Modern CSS Design */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2d3748;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+        input:focus {
+            outline: none;
+            border-color: #48bb78;
+        }
+        button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #results {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wordle Assistant</h1>
+        <div class="input-grid" id="inputGrid">
+            <!-- 5 input boxes for letters -->
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+        </div>
+        <button onclick="getSuggestions()">Get Suggestions</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Replace with your API URL (e.g., https://your-api.com/suggestions)
+        const API_URL = 'http://localhost:5000/suggestions';
+
+        async function getSuggestions() {
+            const letters = Array.from(document.querySelectorAll('input'))
+                .map(input => input.value.toUpperCase() || '_');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ letters })
+                });
+                const data = await response.json();
+                displayResults(data.suggestions);
+            } catch (error) {
+                alert('Error fetching suggestions!');
+            }
+        }
+
+        function displayResults(words) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = words.length ? 
+                `<h3>Possible Words: ${words.join(', ')}</h3>` :
+                `<h3>No matches found!</h3>`;
+        }
+    </script>
+</body>
+</html>
