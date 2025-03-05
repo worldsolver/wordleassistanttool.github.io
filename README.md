@@ -1,0 +1,1 @@
+# wordleassistanttool.github.io
